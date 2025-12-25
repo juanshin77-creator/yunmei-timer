@@ -2,19 +2,20 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>云美老師的計時器｜投影版</title>
+  <title>雲美老師的計時器｜投影版</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * {
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
     }
 
     body {
       margin: 0;
       padding: 24px;
-      background: #111827; /* 深色背景，投影更清楚 */
-      color: #111827;
+      background: #111827;
+      color: #f9fafb;
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -24,318 +25,791 @@
     .app {
       width: 100%;
       max-width: 1200px;
-      background: #f9fafb;
+      background: #111827;
       border-radius: 24px;
+      border: 2px solid #374151;
       padding: 24px 28px 32px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
     }
 
     .header {
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .title-block h1 {
+      font-size: 32px;
+      margin: 0;
+    }
+
+    .title-block p {
+      margin: 4px 0 0;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 8px;
+      background: #020617;
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+    }
+
+    .mode-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 14px;
+      background: transparent;
+      color: #e5e7eb;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .mode-btn.active {
+      background: #f97316;
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .timer-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 16px 24px;
+      border-radius: 24px;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+      border: 1px solid #1f2937;
+    }
+
+    .label {
+      font-size: 16px;
+      color: #9ca3af;
       margin-bottom: 8px;
     }
 
-    .title {
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      margin-bottom: 4px;
-    }
-
-    .subtitle {
-      font-size: 16px;
-      color: #4b5563;
-    }
-
-    .card {
-      background: #ffffff;
-      border-radius: 20px;
-      border: 1px solid #e5e7eb;
-      padding: 18px 20px 20px;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .card-title {
-      font-size: 18px;
+    .big-time {
+      font-size: 96px;
+      letter-spacing: 4px;
       font-weight: 700;
+      margin: 0 0 4px;
+    }
+
+    .segment-info {
+      font-size: 18px;
+      color: #fbbf24;
+      min-height: 24px;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+
+    .input-group {
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .badge {
-      font-size: 13px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: #fee2e2;
-      color: #b91c1c;
-      font-weight: 600;
-    }
-
-    /* 單一計時器：超大數字 */
-    .main-timer-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      margin-top: 4px;
-    }
-
-    .timer-display-main {
-      font-size: 90px;
-      font-weight: 800;
-      letter-spacing: 0.16em;
-      text-align: center;
-      color: #111827;
-    }
-
-    .inputs-row {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
       flex-wrap: wrap;
     }
 
-    .inputs-row label {
-      font-size: 15px;
-      color: #4b5563;
-      text-align: center;
-    }
-
-    .inputs-row input[type="number"],
-    .inputs-row input[type="text"] {
-      width: 90px;
-      padding: 8px 10px;
-      border-radius: 12px;
-      border: 1px solid #d1d5db;
-      font-size: 18px;
-      text-align: center;
-    }
-
-    .btn-row {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-top: 4px;
-    }
-
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 10px 22px;
-      font-size: 16px;
-      cursor: pointer;
-      background: #e5e7eb;
-      color: #111827;
-      font-weight: 600;
-      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
-    }
-
-    button.primary {
-      background: #ef4444;
-      color: #f9fafb;
-      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.6);
-    }
-
-    button.secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    button.danger {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    button.small {
-      padding: 6px 12px;
-      font-size: 13px;
-      border-radius: 999px;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-    }
-
-    button:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-
-    /* 多段計時區 */
-    .section-label {
+    .input-group label {
       font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #374151;
+      color: #e5e7eb;
     }
 
-    .multi-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
-      gap: 18px;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 900px) {
-      .multi-layout {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .current-phase-text {
-      font-size: 16px;
-      color: #111827;
-      text-align: center;
-      min-height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .timer-display-sub {
-      font-size: 60px;
-      font-weight: 800;
-      letter-spacing: 0.16em;
-      text-align: center;
-      color: #111827;
-      margin-top: 8px;
-    }
-
-    .phase-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 260px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .phase-item {
-      display: grid;
-      grid-template-columns: 1.6fr 0.7fr 0.7fr auto;
-      gap: 6px;
-      align-items: center;
+    .time-input {
+      width: 70px;
       padding: 6px 8px;
-      border-radius: 12px;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      text-align: center;
+    }
+
+    .preset-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 10px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #1f2937;
+      color: #e5e7eb;
+      border: 1px solid #374151;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      background: #374151;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: #22c55e;
+      border-color: #22c55e;
+      color: #022c22;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: #16a34a;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #fee2e2;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-style: dashed;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      gap: 20px;
+    }
+
+    /* 多段計時表格區 */
+    .sequence-card {
+      background: #020617;
+      border-radius: 18px;
+      padding: 16px 18px 20px;
+      border: 1px solid #1f2937;
+    }
+
+    .sequence-card h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .seq-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
       font-size: 14px;
     }
 
-    .phase-item input[type="text"],
-    .phase-item input[type="number"] {
+    .seq-table th,
+    .seq-table td {
+      border-bottom: 1px solid #1f2937;
+      padding: 6px 4px;
+      text-align: left;
+    }
+
+    .seq-table th {
+      font-weight: 500;
+      color: #9ca3af;
+    }
+
+    .seq-input {
       width: 100%;
       padding: 4px 6px;
-      font-size: 14px;
       border-radius: 8px;
-      border: 1px solid #d1d5db;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 13px;
     }
 
-    /* YouTube 區塊 */
-    .youtube-input-row {
+    .seq-min {
+      width: 64px;
+      text-align: right;
+    }
+
+    .seq-row-index {
+      width: 40px;
+      color: #9ca3af;
+    }
+
+    .yt-card {
+      background: #020617;
+      border-radius: 18px;
+      padding: 16px 18px 20px;
+      border: 1px solid #1f2937;
+    }
+
+    .yt-card h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .yt-input-row {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      gap: 8px;
       margin-bottom: 10px;
-      margin-top: 4px;
+      flex-wrap: wrap;
     }
 
-    .youtube-input-row input[type="text"] {
+    .yt-input {
       flex: 1;
-      min-width: 0;
-      padding: 8px 12px;
+      min-width: 220px;
+      padding: 8px 10px;
       border-radius: 999px;
-      border: 1px solid #d1d5db;
-      font-size: 14px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 13px;
     }
 
-    .youtube-frame-wrapper {
+    .yt-note {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+
+    .yt-frame-wrapper {
       position: relative;
       width: 100%;
-      padding-bottom: 56.25%;
-      border-radius: 18px;
+      padding-top: 56.25%;
+      border-radius: 16px;
       overflow: hidden;
-      background: #000;
-      margin-top: 8px;
+      background: #020617;
+      border: 1px solid #1f2937;
     }
 
-    .youtube-frame-wrapper iframe {
+    .yt-frame-wrapper iframe {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      border: 0;
+      border: none;
     }
 
-    .hint {
+    .status-line {
       font-size: 13px;
-      color: #6b7280;
-      margin-top: 4px;
+      color: #9ca3af;
+      margin-top: 6px;
+      min-height: 18px;
     }
 
-    ul.tip-list {
-      padding-left: 20px;
-      margin: 4px 0 0;
-      font-size: 14px;
-      color: #4b5563;
+    @media (max-width: 900px) {
+      .big-time {
+        font-size: 64px;
+      }
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+      .app {
+        padding: 16px 16px 20px;
+      }
+      .title-block h1 {
+        font-size: 24px;
+      }
+      .big-time {
+        font-size: 52px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- 標題 -->
     <div class="header">
-      <div class="title">云美老師的計時器</div>
-      <div class="subtitle">適合投影在教室大螢幕：大字體 × 多段計時 × 音樂</div>
+      <div class="title-block">
+        <h1>雲美老師的教室計時器</h1>
+        <p>單段 / 多段流程計時＋鈴聲提醒＋可搭配 YouTube 音樂</p>
+      </div>
+      <div class="mode-switch">
+        <button class="mode-btn active" id="mode-single">單段倒數</button>
+        <button class="mode-btn" id="mode-sequence">多段流程</button>
+      </div>
     </div>
 
-    <!-- 單一計時器（主畫面） -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">
-          單一計時器
-          <span style="font-size:13px;color:#6b7280;">（全班最常看的主畫面）</span>
-        </div>
-        <div class="badge">時間到會出現嗶聲</div>
+    <div class="timer-display">
+      <div class="label" id="modeLabel">目前模式：單段倒數</div>
+      <div class="big-time" id="timeDisplay">00:00</div>
+      <div class="segment-info" id="segmentInfo"></div>
+    </div>
+
+    <!-- 控制區 -->
+    <div class="controls-row">
+      <div class="input-group">
+        <label>設定時間：</label>
+        <input
+          type="number"
+          id="minInput"
+          class="time-input"
+          min="0"
+          value="5"
+        />
+        <span>分</span>
+        <input
+          type="number"
+          id="secInput"
+          class="time-input"
+          min="0"
+          max="59"
+          value="0"
+        />
+        <span>秒</span>
       </div>
 
-      <div class="main-timer-block">
-        <div id="single-display" class="timer-display-main">00:00</div>
+      <div class="input-group">
+        <button class="btn-primary btn" id="startBtn">開始 / 暫停</button>
+        <button class="btn btn-ghost" id="resetBtn">重設</button>
+        <button class="btn btn-danger" id="clearBtn">歸零</button>
+      </div>
+    </div>
 
-        <div class="inputs-row">
-          <label>
-            分鐘
-            <br />
-            <input id="single-minutes" type="number" min="0" value="5" />
-          </label>
-          <label>
-            秒鐘
-            <br />
-            <input id="single-seconds" type="number" min="0" max="59" value="0" />
-          </label>
+    <div class="preset-row">
+      <span class="label">快速設定：</span>
+      <button class="btn" data-preset="3">3 分鐘</button>
+      <button class="btn" data-preset="5">5 分鐘</button>
+      <button class="btn" data-preset="10">10 分鐘</button>
+      <button class="btn" data-preset="15">15 分鐘</button>
+    </div>
+
+    <div class="layout">
+      <!-- 左邊：多段計時 -->
+      <div class="sequence-card">
+        <h2>多段流程計時（依序跑完）</h2>
+        <p class="yt-note">
+          可以預先排好「破冰 → 小組討論 → 回饋」等流程，按「開始多段計時」後會自動一段接一段。
+        </p>
+        <table class="seq-table" id="seqTable">
+          <thead>
+            <tr>
+              <th class="seq-row-index">段次</th>
+              <th>流程名稱</th>
+              <th class="seq-min">分鐘</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="seq-row-index">1</td>
+              <td>
+                <input
+                  class="seq-input"
+                  value="暖身 & 破冰"
+                  data-type="title"
+                />
+              </td>
+              <td>
+                <input
+                  class="seq-input seq-min"
+                  type="number"
+                  min="0"
+                  value="5"
+                  data-type="minutes"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="seq-row-index">2</td>
+              <td>
+                <input
+                  class="seq-input"
+                  value="小組討論"
+                  data-type="title"
+                />
+              </td>
+              <td>
+                <input
+                  class="seq-input seq-min"
+                  type="number"
+                  min="0"
+                  value="10"
+                  data-type="minutes"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="seq-row-index">3</td>
+              <td>
+                <input
+                  class="seq-input"
+                  value="成果分享 & 回饋"
+                  data-type="title"
+                />
+              </td>
+              <td>
+                <input
+                  class="seq-input seq-min"
+                  type="number"
+                  min="0"
+                  value="8"
+                  data-type="minutes"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px">
+          <button class="btn btn-ghost" id="addRowBtn">＋ 新增一段</button>
+          <button class="btn btn" id="loadSeqIntoTimer">
+            把目前段落時間帶入上方
+          </button>
+          <button class="btn btn-primary" id="startSequenceBtn">
+            開始多段計時
+          </button>
         </div>
+        <div class="status-line" id="sequenceStatus"></div>
+      </div>
 
-        <div class="btn-row">
-          <button id="single-start" class="primary">開始</button>
-          <button id="single-pause" class=
+      <!-- 右邊：YouTube 音樂區 -->
+      <div class="yt-card">
+        <h2>背景音樂（YouTube）</h2>
+        <p class="yt-note">
+          貼上 YouTube 連結或影片 ID，點「載入音樂」。上課時可請同學自己決定要不要播放。
+        </p>
+        <div class="yt-input-row">
+          <input
+            id="ytInput"
+            class="yt-input"
+            placeholder="例如：https://www.youtube.com/watch?v=dQw4w9WgXcQ 或只貼 ID"
+          />
+          <button class="btn btn" id="loadYtBtn">載入音樂</button>
+        </div>
+        <div class="yt-frame-wrapper" id="ytWrapper">
+          <!-- 這裡會動態塞入 iframe -->
+        </div>
+        <div class="status-line" id="ytStatus">
+          提示：有些瀏覽器會阻擋自動播放，請手動按一下 ▶️。
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <script>
+    // ===== 共用狀態 =====
+    let remainingSeconds = 0;
+    let timerId = null;
+    let isRunning = false;
+    let mode = "single"; // 'single' 或 'sequence'
+    let seqIndex = 0;
+    let seqList = [];
 
+    const timeDisplay = document.getElementById("timeDisplay");
+    const segmentInfo = document.getElementById("segmentInfo");
+    const minInput = document.getElementById("minInput");
+    const secInput = document.getElementById("secInput");
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const modeSingleBtn = document.getElementById("mode-single");
+    const modeSeqBtn = document.getElementById("mode-sequence");
+    const modeLabel = document.getElementById("modeLabel");
+    const seqTableBody = document.querySelector("#seqTable tbody");
+    const addRowBtn = document.getElementById("addRowBtn");
+    const startSequenceBtn = document.getElementById("startSequenceBtn");
+    const loadSeqIntoTimerBtn = document.getElementById("loadSeqIntoTimer");
+    const sequenceStatus = document.getElementById("sequenceStatus");
+    const ytInput = document.getElementById("ytInput");
+    const ytWrapper = document.getElementById("ytWrapper");
+    const ytStatus = document.getElementById("ytStatus");
 
+    // ===== 小工具 =====
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60)
+        .toString()
+        .padStart(2, "0");
+      const s = (sec % 60).toString().padStart(2, "0");
+      return `${m}:${s}`;
+    }
 
+    function updateDisplay() {
+      timeDisplay.textContent = formatTime(remainingSeconds);
+    }
 
+    function readInputsToSeconds() {
+      const m = parseInt(minInput.value || "0", 10);
+      const s = parseInt(secInput.value || "0", 10);
+      return Math.max(m * 60 + s, 0);
+    }
 
+    function setInputsFromSeconds(total) {
+      const m = Math.floor(total / 60);
+      const s = total % 60;
+      minInput.value = m;
+      secInput.value = s;
+    }
 
+    function stopTimer() {
+      if (timerId !== null) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      isRunning = false;
+      startBtn.textContent = "開始 / 暫停";
+    }
 
+    // 簡單嗶聲
+    function playBeep() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 880;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        const now = ctx.currentTime;
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+        osc.start(now);
+        osc.stop(now + 0.9);
+      } catch (e) {
+        console.warn("AudioContext not available");
+      }
+    }
 
+    // ===== 計時邏輯 =====
+    function tick() {
+      if (!isRunning) return;
+      remainingSeconds--;
+      if (remainingSeconds <= 0) {
+        remainingSeconds = 0;
+        updateDisplay();
+        stopTimer();
+        playBeep();
+        if (mode === "sequence") {
+          nextSegment();
+        }
+        return;
+      }
+      updateDisplay();
+    }
+
+    function startOrPause() {
+      if (!isRunning) {
+        // 從靜止開始
+        if (remainingSeconds <= 0) {
+          remainingSeconds = readInputsToSeconds();
+          if (remainingSeconds <= 0) return;
+        }
+        isRunning = true;
+        startBtn.textContent = "暫停";
+        updateDisplay();
+        timerId = setInterval(tick, 1000);
+      } else {
+        // 暫停
+        isRunning = false;
+        startBtn.textContent = "開始 / 暫停";
+        if (timerId !== null) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+      }
+    }
+
+    function resetCurrent() {
+      stopTimer();
+      remainingSeconds = readInputsToSeconds();
+      updateDisplay();
+    }
+
+    function clearAll() {
+      stopTimer();
+      remainingSeconds = 0;
+      updateDisplay();
+      sequenceStatus.textContent = "";
+      segmentInfo.textContent = "";
+    }
+
+    startBtn.addEventListener("click", startOrPause);
+    resetBtn.addEventListener("click", resetCurrent);
+    clearBtn.addEventListener("click", clearAll);
+
+    // ===== 快速預設時間 =====
+    document.querySelectorAll(".preset-row .btn[data-preset]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const min = parseInt(btn.getAttribute("data-preset"), 10);
+        minInput.value = min;
+        secInput.value = 0;
+        remainingSeconds = min * 60;
+        updateDisplay();
+        sequenceStatus.textContent = `已套用預設 ${min} 分鐘`;
+      })
+    );
+
+    // ===== 模式切換 =====
+    function switchMode(newMode) {
+      mode = newMode;
+      if (mode === "single") {
+        modeSingleBtn.classList.add("active");
+        modeSeqBtn.classList.remove("active");
+        modeLabel.textContent = "目前模式：單段倒數";
+        segmentInfo.textContent = "";
+      } else {
+        modeSingleBtn.classList.remove("active");
+        modeSeqBtn.classList.add("active");
+        modeLabel.textContent = "目前模式：多段流程（會依序跑完所有段落）";
+      }
+      stopTimer();
+      sequenceStatus.textContent = "";
+    }
+
+    modeSingleBtn.addEventListener("click", () => switchMode("single"));
+    modeSeqBtn.addEventListener("click", () => switchMode("sequence"));
+
+    // ===== 多段流程處理 =====
+    function readSequenceFromTable() {
+      const rows = Array.from(seqTableBody.querySelectorAll("tr"));
+      const list = [];
+      rows.forEach((tr, idx) => {
+        const titleInput = tr.querySelector('input[data-type="title"]');
+        const minInput = tr.querySelector('input[data-type="minutes"]');
+        const title = (titleInput.value || `第 ${idx + 1} 段`).trim();
+        const min = Math.max(parseInt(minInput.value || "0", 10), 0);
+        if (min > 0) {
+          list.push({ title, minutes: min });
+        }
+      });
+      return list;
+    }
+
+    function refreshSeqRowIndex() {
+      Array.from(seqTableBody.querySelectorAll(".seq-row-index")).forEach(
+        (td, i) => {
+          td.textContent = i + 1;
+        }
+      );
+    }
+
+    addRowBtn.addEventListener("click", () => {
+      const tr = document.createElement("tr");
+      const count = seqTableBody.querySelectorAll("tr").length + 1;
+      tr.innerHTML = `
+        <td class="seq-row-index">${count}</td>
+        <td><input class="seq-input" value="新流程 ${count}" data-type="title" /></td>
+        <td><input class="seq-input seq-min" type="number" min="0" value="5" data-type="minutes" /></td>
+      `;
+      seqTableBody.appendChild(tr);
+    });
+
+    function loadSegmentToTimer(i) {
+      const seg = seqList[i];
+      if (!seg) return;
+      const total = seg.minutes * 60;
+      remainingSeconds = total;
+      setInputsFromSeconds(total);
+      updateDisplay();
+      segmentInfo.textContent = `第 ${i + 1} 段：${seg.title}（共 ${
+        seg.minutes
+      } 分鐘）`;
+      sequenceStatus.textContent = `目前在第 ${i + 1} / ${
+        seqList.length
+      } 段。`;
+    }
+
+    function startSequence() {
+      switchMode("sequence");
+      seqList = readSequenceFromTable();
+      if (seqList.length === 0) {
+        sequenceStatus.textContent = "請至少設定一個大於 0 分鐘的流程。";
+        return;
+      }
+      seqIndex = 0;
+      loadSegmentToTimer(seqIndex);
+      stopTimer();
+      isRunning = true;
+      startBtn.textContent = "暫停";
+      timerId = setInterval(tick, 1000);
+    }
+
+    function nextSegment() {
+      seqIndex++;
+      if (seqIndex >= seqList.length) {
+        sequenceStatus.textContent = "所有流程已結束，辛苦大家了！";
+        segmentInfo.textContent = "✅ 流程全部完成";
+        return;
+      }
+      loadSegmentToTimer(seqIndex);
+      isRunning = true;
+      startBtn.textContent = "暫停";
+      timerId = setInterval(tick, 1000);
+    }
+
+    startSequenceBtn.addEventListener("click", startSequence);
+
+    loadSeqIntoTimerBtn.addEventListener("click", () => {
+      seqList = readSequenceFromTable();
+      if (seqList.length === 0) {
+        sequenceStatus.textContent = "沒有可載入的流程，請先設定表格。";
+        return;
+      }
+      const first = seqList[0];
+      const total = first.minutes * 60;
+      remainingSeconds = total;
+      setInputsFromSeconds(total);
+      updateDisplay();
+      segmentInfo.textContent = `已載入第 1 段：「${first.title}」時間 ${
+        first.minutes
+      } 分鐘`;
+    });
+
+    // ===== YouTube 插入 =====
+    function extractYtId(input) {
+      if (!input) return "";
+      const trimmed = input.trim();
+      // 若只有 11 碼，當作 ID
+      if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+
+      // 常見網址格式
+      const urlMatch = trimmed.match(
+        /(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/
+      );
+      return urlMatch ? urlMatch[1] : "";
+    }
+
+    function loadYoutube() {
+      const id = extractYtId(ytInput.value);
+      if (!id) {
+        ytStatus.textContent = "讀不到影片 ID，請確認連結是否正確。";
+        return;
+      }
+      ytWrapper.innerHTML = `
+        <iframe
+          src="https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      `;
+      ytStatus.textContent = "已載入影片，如未自動播放，請手動按 ▶️。";
+    }
+
+    document.getElementById("loadYtBtn").addEventListener("click", loadYoutube);
+
+    // 初始畫面
+    remainingSeconds = readInputsToSeconds();
+    updateDisplay();
+  </script>
+</body>
+</html>
